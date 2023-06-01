@@ -87,7 +87,7 @@ namespace shootgame
                 }
                 if (gameTime <= 0)
                 {
-                    if (score <= 500)
+                    if (score <= 800)
                     {
                         EndGame_Score();
                         return;
