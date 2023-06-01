@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.scoreLabel = new System.Windows.Forms.Label();
             this.lifeLabel = new System.Windows.Forms.Label();
             this.player = new System.Windows.Forms.PictureBox();
@@ -59,10 +60,13 @@
             // 
             // player
             // 
-            this.player.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.player.Location = new System.Drawing.Point(227, 600);
+            this.player.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.player.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("player.BackgroundImage")));
+            this.player.Image = ((System.Drawing.Image)(resources.GetObject("player.Image")));
+            this.player.InitialImage = ((System.Drawing.Image)(resources.GetObject("player.InitialImage")));
+            this.player.Location = new System.Drawing.Point(206, 585);
             this.player.Name = "player";
-            this.player.Size = new System.Drawing.Size(22, 22);
+            this.player.Size = new System.Drawing.Size(60, 37);
             this.player.TabIndex = 2;
             this.player.TabStop = false;
             this.player.Tag = "player";
@@ -71,7 +75,7 @@
             // 
             this.timeLabel.AutoSize = true;
             this.timeLabel.Font = new System.Drawing.Font("Gulim", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.timeLabel.Location = new System.Drawing.Point(340, 13);
+            this.timeLabel.Location = new System.Drawing.Point(352, 13);
             this.timeLabel.Name = "timeLabel";
             this.timeLabel.Size = new System.Drawing.Size(41, 16);
             this.timeLabel.TabIndex = 3;

@@ -12,11 +12,12 @@ namespace shootgame
     {
         // 플레이어 status
         int playerLife = 3;
-        int maxEnemyCount = 10;
-        int maxItemCount = 3;
+        int maxEnemyCount = 8;
+        int maxHealthICount = 1;
+        int maxTimeICount = 1;
         int score = 0;
         int playerSpeed = 30;
-        int gameTime = 30;
+        int gameTime = 15;
 
         // flag 및 timer 설정
         bool playerLeftMovement = true;
@@ -38,6 +39,8 @@ namespace shootgame
         private Label timeLabel;
 
         private int visibleEnemyCount = 0;
+        private int visibleHealthICount = 0;
+        private int visibleTimeICount = 0;
         public GameLogic(Form form)
         {
             gameForm = form;
@@ -72,9 +75,10 @@ namespace shootgame
             MoveItem_health();
             MoveItem_time();
 
+            CheckICollision();
             CheckCollision();
 
-            if (playerLife <= 0 || gameTime <= 0)
+            if (playerLife <= 0 || gameTime <= 0 || score <= 500)
             {
                 if (playerLife <= 0)
                 {
@@ -83,8 +87,20 @@ namespace shootgame
                 }
                 if (gameTime <= 0)
                 {
-                    EndGame_Time();
-                    return;
+                    if (score <= 500)
+                    {
+                        EndGame_Score();
+                        return;
+                    }
+                    else if (playerLife > 0)
+                    {
+                        EndGame_Clear();
+                    }
+                    else
+                    {
+                        EndGame_Time();
+                        return;
+                    }
                 }
             }
 
@@ -93,11 +109,16 @@ namespace shootgame
                 SpawnEnemy();
             }
 
-            if (gameTime < 30 && gameTime % 5 != 0) //수정필요 적과 비슷한 로직으로 (함수참고)
+            if (gameTime % 5 != 0 && visibleTimeICount < maxTimeICount) //수정필요 적과 비슷한 로직으로 (함수참고)
             {
                 SpawnTimeItem();
+            }
+
+            if (gameTime % 9 != 0 && visibleHealthICount < maxHealthICount) //수정필요 적과 비슷한 로직으로 (함수참고)
+            {
                 SpawnHealthItem();
             }
+
 
             UpdateProjectiles();
         }
@@ -106,7 +127,7 @@ namespace shootgame
         {
             foreach (PictureBox enemy in enemies)
             {
-                enemy.Top += 30; // 적 속도
+                enemy.Top += 35; // 적 속도
 
                 if (enemy.Top >= gameForm.Height)
                 {
@@ -119,7 +140,7 @@ namespace shootgame
         {
             foreach (PictureBox healthItem in healthItems)
             {
-                healthItem.Top += 40; // 적 속도
+                healthItem.Top += 40; 
 
                 if (healthItem.Top >= gameForm.Height)
                 {
@@ -132,7 +153,7 @@ namespace shootgame
         {
             foreach (PictureBox timeItem in timeItems)
             {
-                timeItem.Top += 40; // 적 속도
+                timeItem.Top += 40; 
 
                 if (timeItem.Top >= gameForm.Height)
                 {
@@ -150,7 +171,7 @@ namespace shootgame
                     enemy.Visible = false;
                     playerLife--;
                     score += 10;
-                    visibleEnemyCount--; // Decrease the count when an enemy becomes invisible
+                    visibleEnemyCount--;
                 }
             }
 
@@ -163,8 +184,33 @@ namespace shootgame
                         enemy.Visible = false;
                         projectile.Visible = false;
                         score += 10;
-                        visibleEnemyCount--; // Decrease the count when an enemy becomes invisible
+                        visibleEnemyCount--;
                     }
+                }
+            }
+        }
+
+        private void CheckICollision()
+        {
+            foreach (PictureBox healthI in healthItems)
+            {
+                if (healthI.Bounds.IntersectsWith(player.Bounds) && healthI.Visible)
+                {
+                    healthI.Visible = false;
+                    playerLife += 1;
+                    score += 5;
+                    visibleHealthICount--;
+                }
+            }
+
+            foreach (PictureBox timeI in timeItems)
+            {
+                if (timeI.Bounds.IntersectsWith(player.Bounds) && timeI.Visible)
+                {
+                    timeI.Visible = false;
+                    gameTime += 4;
+                    score += 5;
+                    visibleTimeICount--;
                 }
             }
         }
@@ -174,7 +220,7 @@ namespace shootgame
             for (int i = projectiles.Count - 1; i >= 0; i--)
             {
                 PictureBox projectile = projectiles[i];
-                projectile.Top -= 20; // 탄환 속도
+                projectile.Top -= 25; // 탄환 속도
 
                 if (projectile.Top <= 0)
                 {
@@ -205,8 +251,8 @@ namespace shootgame
         private void FireProjectile()
         {
             PictureBox projectile = new PictureBox();
-            projectile.ImageLocation = "C:/Users/user/Downloads/projectile.png"; // 탄환 이미지
-            projectile.Size = new Size(20, 20); // 탄환 사이즈
+            projectile.ImageLocation = "C:/Users/user/source/repos/shootgame/shootgame/gameAsset/projectile.png"; // 탄환 이미지
+            projectile.Size = new Size(20, 40); // 탄환 사이즈
             projectile.SizeMode = PictureBoxSizeMode.StretchImage;
             projectile.Tag = "projectile";
             projectile.Left = player.Left + (player.Width / 2) - (projectile.Width / 2);
@@ -223,7 +269,7 @@ namespace shootgame
             int spawnLocationY = 150 - random.Next(0, gameForm.Height - 50);
 
             PictureBox enemy = new PictureBox();
-            enemy.ImageLocation = "C:/Users/user/Downloads/pokemon-g605cbf575_640.png"; // 적 이미지
+            enemy.ImageLocation = "C:/Users/user/source/repos/shootgame/shootgame/gameAsset/Enemy.png"; // 적 이미지
             enemy.Size = new Size(40, 30); // 적 사이즈
             enemy.SizeMode = PictureBoxSizeMode.StretchImage;
             enemy.Tag = "enemy";
@@ -244,7 +290,7 @@ namespace shootgame
             int spawnLocationY = 150 - random.Next(0, gameForm.Height - 50);
 
             PictureBox timeItem = new PictureBox();
-            timeItem.ImageLocation = ""; // 시간 증가 아이템 이미지
+            timeItem.ImageLocation = "C:/Users/user/source/repos/shootgame/shootgame/gameAsset/time.png"; // 시간 증가 아이템 이미지
             timeItem.Size = new Size(40, 30); // 아이템 사이즈
             timeItem.SizeMode = PictureBoxSizeMode.StretchImage;
             timeItem.Tag = "timeItem";
@@ -253,17 +299,19 @@ namespace shootgame
 
             gameForm.Controls.Add(timeItem);
             timeItems.Add(timeItem);
+
+            visibleTimeICount++;
         }
 
         private void SpawnHealthItem()
         {
             Random random = new Random();
 
-            int spawnLocationX = random.Next(0, gameForm.Width - 100);
+            int spawnLocationX = random.Next(0, gameForm.Width - 50);
             int spawnLocationY = 150 - random.Next(0, gameForm.Height - 50);
 
             PictureBox healthItem = new PictureBox();
-            healthItem.ImageLocation = ""; // 라이프증가 아이템 이미지
+            healthItem.ImageLocation = "C:/Users/user/source/repos/shootgame/shootgame/gameAsset/heart.png"; // 라이프증가 아이템 이미지
             healthItem.Size = new Size(40, 30); // 아이템 사이즈
             healthItem.SizeMode = PictureBoxSizeMode.StretchImage;
             healthItem.Tag = "healthItem";
@@ -272,6 +320,8 @@ namespace shootgame
 
             gameForm.Controls.Add(healthItem);
             healthItems.Add(healthItem);
+
+            visibleHealthICount++;
         }
 
         private void EndGame_Life()
@@ -293,6 +343,36 @@ namespace shootgame
         {
             gameTimer.Stop();
             MessageBox.Show("Game Over! *시간초과*\n최종점수 : " + score, "게임");
+
+            if (MessageBox.Show("다시 진행하시겠습니까?", "게임", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                Application.Restart();
+            }
+            else
+            {
+                Application.Exit();
+            }
+        }
+
+        private void EndGame_Score()
+        {
+            gameTimer.Stop();
+            MessageBox.Show("Game Over! *점수미달*\n최종점수 : " + score, "게임");
+
+            if (MessageBox.Show("다시 진행하시겠습니까?", "게임", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                Application.Restart();
+            }
+            else
+            {
+                Application.Exit();
+            }
+        }
+
+        private void EndGame_Clear()
+        {
+            gameTimer.Stop();
+            MessageBox.Show("Game Clear! *축하합니다*\n최종점수 : " + score, "게임");
 
             if (MessageBox.Show("다시 진행하시겠습니까?", "게임", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {

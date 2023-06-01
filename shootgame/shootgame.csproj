@@ -80,5 +80,10 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="gameAsset\Enemy.png" />
+    <Content Include="gameAsset\heart.png" />
+    <Content Include="gameAsset\time.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

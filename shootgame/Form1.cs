@@ -17,9 +17,12 @@ namespace shootgame
         public Form1()
         {
             InitializeComponent();
+            player.Load("C:/Users/user/source/repos/shootgame/shootgame/gameAsset/spaceShip.png");
+            player.SizeMode = PictureBoxSizeMode.StretchImage;
 
             gameLogic = new GameLogic(this);
             KeyDown += Form1_KeyDown;
+
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -34,7 +37,6 @@ namespace shootgame
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // Code for initializing the form and any other necessary setup
         }
     }
 }
